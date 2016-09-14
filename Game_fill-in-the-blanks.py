@@ -65,11 +65,6 @@ def is_blank(word):
     return False
 
 
-def replace_all(text, dic):
-    for i, j in dic.iteritems():
-        text = text.replace(i, j)
-    return text
-
 # STEP 2b
 # Prints out the question for the level as it currently exists.
 # Will print with blanks filled as quiz progresses
