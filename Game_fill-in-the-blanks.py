@@ -1,7 +1,8 @@
 
-attempt_limit = 3
+ATTEMPT_LIMIT = 3
 
 # Reference to make the text displayed to user change
+
 class bcolors:
     FAIL = '\033[91m'
     HEADER = '\033[95m'
@@ -11,11 +12,17 @@ class bcolors:
     FAIL = '\033[91m'
 
 def play_game():
+    # Function Purpose: to allow the user to make a difficulty choice with regards to which fill in the blanks game they wish to play.
+    # whlist playing the game the user will be prompted to guess the answer to each unique blank space. Should the user fail to answer incorrectly
+    # 3 times they will fail the quiz and the game will exit.
+    #
+    # Inputs: Only user input to prompts
+    # Outputs: Only Print statements prompting the users and the execution of the following functions: level_check(level_choice) and test_user_answers(quiz_str_split2, answer)
+
 	print "\n"
 	print bcolors.HEADER +"WELCOME TO THE GAME OF FILL IN THE STRING."
 	print bcolors.OKGREEN + "\n"
-	level_choice = raw_input("Which level do you want to play? Please enter easy, medium or hard then press Enter) \n")
-	current_level = level_check(level_choice)
+        current_level= level_check()
 
 	print bcolors.OKBLUE + "To play you will be prompted to fill the spaces of the below sentence"
 	print bcolors.OKBLUE + 'You will get 3 guesses per problem'
@@ -25,82 +32,98 @@ def play_game():
 	print bcolors.OKGREEN + "The current paragraph reads as such:"
         test_user_answers(quiz_str_split2, answer)
 
-def level_check(level_choice):
-	current_level = 0
-	while level_choice not in difficulty:
+def level_check():
+    #  Purpose: to check that the users input for difficulty level is validates
+    # input: level choice
+    # output: the list positition of the chosen difficulty level.
+    current_level = 0
+    level_choice = raw_input("Which level do you want to play? Please enter easy, medium or hard then press Enter) \n")
+
+    while level_choice not in difficulty:
 		print bcolors.FAIL + ""
 		level_choice = raw_input('Your input was invalid.your only choices are easy, medium or hard. \n')
-	current_level = difficulty.index(level_choice)
-	print bcolors.OKGREEN + '\n You have selected '+ level_choice +' mode.'
-	return current_level
+    current_level = difficulty.index(level_choice)
+    print bcolors.OKGREEN + '\n You have selected '+ level_choice +' mode.'
+    return current_level
 
 
 # STEP 2
-# Scans through the Quiz string for blanks and validates whether they are answered correctly
-# When the answers are correct the blanks are filled in.
+
 
 def test_user_answers(quiz_str_split2, answer):
-    index = 0
+    # Purpose: Scans through the Quiz string for blanks and validates whether they are answered correctly
+    # When the answers are correct the blanks are filled in.
+    # Input: The selected quiz string split into a list of words and the answer list to the quiz.
+
     blank_num = 1
     for word in quiz_str_split2:
         if is_blank(word):
             print_question(quiz_str_split2)
             user_input = raw_input('\n\nWhat should go in blank space ___'+str(blank_num)+'___ ?\n')
-            if is_correct(user_input, blank_num, answer):
-				full_blank = '___'+str(blank_num)+'___'
-				quiz_str_split_new = fill_blank(quiz_str_split2,full_blank, user_input)
-				quiz_str_split2 = quiz_str_split_new
-
-                #quiz_str_split2[index] = answer[blank_num-1]
-				blank_num += 1
-        index += 1
+            user_input = user_input.capitalize()
+            response = is_correct(user_input, blank_num, answer)
+            full_blank = '___'+str(blank_num)+'___'
+            quiz_str_split_new = fill_blank(quiz_str_split2,full_blank, response)
+            quiz_str_split2 = quiz_str_split_new
+            blank_num += 1
 
 
-# STEP 2a
-# Identifies if the current word from quiz_str_split is a blank to be filled.
+
+
 
 def is_blank(word):
+    # Purpose: Identifies if the current word from quiz_str_split is a blank to be filled.
+    # Input: the the current word from quiz_str_split
+    # Output: A boolean True or False value
     if word.find('___') != -1:
         return True
     return False
 
 
-# STEP 2b
-# Prints out the question for the level as it currently exists.
-# Will print with blanks filled as quiz progresses
+
 def print_question(quiz_str_split2):
+    # Purpse: Prints out the question for the level as it currently exists. Will print with blanks filled as quiz progresses
+    # Input: the split list of quiz words + answers currently completed
+    # Output: concatenates all of the individual words from the split word list to a single string.
     print '\n'+' '.join(quiz_str_split2)
 
 
-# Step 2c
-# Determines if the user's answer was correct for the given blank.
-# If incorrect prompts user to try again. Runs until the correct answer is entered.
-# Returns True if user is correct.
+
 def is_correct(user_input, blank_num, answer):
+    # Purpose: Determines if the user's answer was correct for the given blank.  If incorrect prompts user to try again. Runs until the correct answer is entered.
+    # Input: the users answer to the blank number that the user is currently being asked to guess (ie blank_num) and the answer list
+    # Output: True if user is correct.
 	attempt = 1
-	while user_input != answer[blank_num-1] and attempt < attempt_limit:
-		print bcolors.WARNING + "Incorrect. Try again!\n You have made " +str(attempt)+" of " + str(attempt_limit) + " attempts\n"
-		user_input = raw_input('What should go in blank ___'+str(blank_num)+'___?\n')
-		user_input = user_input.capitalize()
-		attempt = attempt + 1
-	if attempt == attempt_limit:
-		print bcolors.FAIL + "you've made 3 out of 3 attempts. Goodbye\n"
-		exit()
 
-	if user_input == answer[blank_num-1]:
-		print bcolors.OKBLUE + 'Correct!'
-		print bcolors.OKGREEN + ""
 
-    	return True
 
-# Step 2d
-# Will replace the blank value with the user input if it is the correct value
+	while attempt < ATTEMPT_LIMIT:
+            if user_input == answer[blank_num-1]:
+                print bcolors.OKBLUE + 'Correct!'
+                print bcolors.OKGREEN + ""
+                return user_input
+
+            else:
+                print bcolors.WARNING + "Incorrect. Try again!\n You have made " +str(attempt)+" of " + str(ATTEMPT_LIMIT) + " attempts\n"
+                user_input = raw_input('What should go in blank ___'+str(blank_num)+'___?\n')
+                user_input = user_input.capitalize()
+                if user_input == answer[blank_num-1]:
+                    print bcolors.OKBLUE + 'Correct!'
+                    print bcolors.OKGREEN + ""
+                    return user_input
+                attempt = attempt + 1
+
+        print bcolors.FAIL + "you've made 3 out of 3 attempts. Goodbye\n"
+        exit()
+
 
 def fill_blank(quiz_str_split2,full_blank, user_input):
-	for i, j in enumerate(quiz_str_split2):
-		if j == full_blank:
-			quiz_str_split2[i]=user_input
-	return quiz_str_split2
+    # PURPOSE: Will replace the blank value with the user input if it is the correct value
+    # INPUT: the splt quiz word list, the blank value that must be replaced by the user input, the user input/answer
+    # OUTPUT: The full quiz with all of the blank spaces of the same number filled with the answer provided by the user.
+    #quiz_str_split2.replace(full_blank, user_input)
+    quiz_str_split2 = [word.replace(full_blank,user_input) for word in quiz_str_split2]
+    return quiz_str_split2
 
 
 # This section list all of the starting lists and their values called by the Game
@@ -109,7 +132,7 @@ difficulty = ['easy', 'medium', 'hard']
 
 levels_quiz_string = [
 # easy Quiz
-("""'Hello ___1___ !'  In ___2___ this is particularly easy; all you have to do
+("""'Hello ___1___!'  In ___2___ this is particularly easy; all you have to do
 is type in: ___3___ "Hello ___1___ !"
 Of course, that isn't a very useful thing to do. However, it is an
 example of how to output to the user using the ___3___ command, and
