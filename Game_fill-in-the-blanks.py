@@ -57,18 +57,18 @@ def test_user_answers(quiz_str_split2, answer):
 
     blank_num = 1
     for word in quiz_str_split2:
-        if is_blank(word):
+        if is_blank(word) == True and blank_num <= len(answer):
             print_question(quiz_str_split2)
             user_input = raw_input('\n\nWhat should go in blank space ___'+str(blank_num)+'___ ?\n')
-            user_input = user_input.capitalize()
+            #user_input = user_input.capitalize()
             response = is_correct(user_input, blank_num, answer)
             full_blank = '___'+str(blank_num)+'___'
-            quiz_str_split_new = fill_blank(quiz_str_split2,full_blank, response)
-            quiz_str_split2 = quiz_str_split_new
+            quiz_str_split2 = fill_blank(quiz_str_split2,full_blank, response)
+            #quiz_str_split2 = quiz_str_split_new
             blank_num += 1
-
-
-
+    print bcolors.HEADER + 'Congratulations!!! You''ve successfully completed the quiz.'
+    print bcolors.OKBLUE + '\n Here is the completed sentence'
+    print print_question(quiz_str_split2)
 
 
 def is_blank(word):
@@ -78,7 +78,6 @@ def is_blank(word):
     if word.find('___') != -1:
         return True
     return False
-
 
 
 def print_question(quiz_str_split2):
@@ -95,8 +94,6 @@ def is_correct(user_input, blank_num, answer):
     # Output: True if user is correct.
 	attempt = 1
 
-
-
 	while attempt < ATTEMPT_LIMIT:
             if user_input == answer[blank_num-1]:
                 print bcolors.OKBLUE + 'Correct!'
@@ -106,10 +103,11 @@ def is_correct(user_input, blank_num, answer):
             else:
                 print bcolors.WARNING + "Incorrect. Try again!\n You have made " +str(attempt)+" of " + str(ATTEMPT_LIMIT) + " attempts\n"
                 user_input = raw_input('What should go in blank ___'+str(blank_num)+'___?\n')
-                user_input = user_input.capitalize()
+                #user_input = user_input.capitalize()
                 if user_input == answer[blank_num-1]:
                     print bcolors.OKBLUE + 'Correct!'
                     print bcolors.OKGREEN + ""
+                    print answer[blank_num-1]
                     return user_input
                 attempt = attempt + 1
 
@@ -161,7 +159,7 @@ allow + and - to be used by ___4___s of the ___1___.  Similarly, ___8___,
 ___9___, and ___10___ allow ___4___s of the ___1___ to be compared
 (with <, >, and ==).'""")]
 
-levels_ans = [["World", "Programming", "Print", "HTML"],
+levels_ans = [["world", "programming", "print", "HTML"],
             ["Procedure", "parameter", "None", "List"],
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]]
 
